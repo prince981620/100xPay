@@ -1,12 +1,9 @@
 import db from "@repo/db/client";
-import { userAuthSchema,userAuth } from "@repo/schemas/userSchema"
+import { userAuthSchema,userAuth } from "../../../../packages/schemas";
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcrypt";
-import { z } from "zod"
-interface userCredentails {
-    phone: string | null;
-    password: string | null;
-}
+
+
 export const authOptions = {
     providers: [
       CredentialsProvider({
@@ -15,7 +12,7 @@ export const authOptions = {
             phone: { label: "Phone number", type: "text", placeholder: "1231231231", required: true },
             password: { label: "Password", type: "password", required: true }
           },
-          async authorize(credentials:any) {
+          async authorize(credentials: Record<'phone' | 'password', string> | undefined | any ) {
             try {
             const response = userAuthSchema.safeParse(credentials);
             console.log(response);
