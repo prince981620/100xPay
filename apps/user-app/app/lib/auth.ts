@@ -1,7 +1,12 @@
 import db from "@repo/db/client";
+import { userAuthSchema,userAuth } from "@repo/schemas/userSchema"
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcrypt";
-
+import { z } from "zod"
+interface userCredentails {
+    phone: string | null;
+    password: string | null;
+}
 export const authOptions = {
     providers: [
       CredentialsProvider({
@@ -10,9 +15,13 @@ export const authOptions = {
             phone: { label: "Phone number", type: "text", placeholder: "1231231231", required: true },
             password: { label: "Password", type: "password", required: true }
           },
-          async authorize(credentials: any) {
-            if(credentials.phone.length !== 10){
-                alert("hi there")
+          async authorize(credentials:any) {
+            try {
+            const response = userAuthSchema.safeParse(credentials);
+            console.log(response);
+            if(!response.success){
+                console.error("invalid Credentials")
+                return null;
             }
             const hashedPassword = await bcrypt.hash(credentials.password, 10);
             const existingUser = await db.user.findFirst({
@@ -33,7 +42,7 @@ export const authOptions = {
                 return null;
             }
 
-            try {
+
                 const user = await db.user.create({
                     data: {
                         number: credentials.phone,
