@@ -7,6 +7,8 @@ app.use(express.json());
 app.get("/hdfcWebhook/getToken", async (req, res) => {});
 
 app.post("/hdfcWebhook", async (req, res) => {
+
+
   const paymentInformation: {
     token: string;
     userId: string;
@@ -17,6 +19,9 @@ app.post("/hdfcWebhook", async (req, res) => {
     amount: req.body.amount,
   };
 
+
+  console.log(paymentInformation,'this is the request things');
+
   //TODO: Add zod validation here?
   //TODO: HDFC bank should ideally send us a secret so we know this is sent by them
   const request = await db.onRampTransaction.findFirst({
@@ -24,9 +29,11 @@ app.post("/hdfcWebhook", async (req, res) => {
       token: paymentInformation.token,
     },
   });
+
+  console.log(request,'this is the data from db');
   if (
-    request?.status == "Processing" &&
-    request.amount == Number(paymentInformation.amount) &&
+    (request?.status == "Processing" &&
+      request.amount == Number(paymentInformation.amount))&&
     request.userId == Number(paymentInformation.userId)
   ) {
     try {
@@ -50,7 +57,7 @@ app.post("/hdfcWebhook", async (req, res) => {
           },
         }),
       ]);
-      res.json({
+      res.status(201).json({
         message: "Captured",
       });
     } catch (e) {
@@ -64,6 +71,7 @@ app.post("/hdfcWebhook", async (req, res) => {
       message: "Duplicate Request",
     });
   }
+
 });
 
 app.listen(3003);
