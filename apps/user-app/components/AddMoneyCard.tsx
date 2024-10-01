@@ -11,7 +11,7 @@ import { createOnrampTransaction } from "../app/lib/actions/createOnrampTransact
 
 const SUPPORTED_BANKS = [{
     name: "HDFC Bank",
-    redirectUrl: "https://netbanking.hdfcbank.com"
+    redirectUrl: "http://localhost:3001"
 }, {
     name: "Axis Bank",
     redirectUrl: "https://www.axisbank.com/"
@@ -37,12 +37,25 @@ export const AddMoney = () => {
             value: x.name
         }))} />
         <div className="flex justify-center pt-4">
-            <Button onClick={async() => {
-                await createOnrampTransaction(provider,amount*100)
-                window.location.href = redirectUrl || "";
-            }}>
-            Add Money
-            </Button>
+        <Button  onClick={async () => {
+    await createOnrampTransaction(provider, amount * 100);
+
+    // Get the screen width and height
+    const screenWidth = window.screen.width;
+    const screenHeight = window.screen.height;
+
+    // Define the desired window dimensions
+    const width = 800; // Adjust the width
+    const height = 600; // Adjust the height
+
+    // Calculate the position to center the window
+    const left = (screenWidth - width) / 2;
+    const top = (screenHeight - height) / 2;
+
+    // Open a new centered window with the specified dimensions
+    window.open(redirectUrl, 'miniTab', `width=${width},height=${height},left=${left},top=${top}`);
+}}> Add money
+</Button>
         </div>
     </div>
 </Card>
