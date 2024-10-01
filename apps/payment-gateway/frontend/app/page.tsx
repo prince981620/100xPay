@@ -127,10 +127,10 @@ export default function BankPaymentConfirmation() {
           <div className="text-xs text-gray-500">
             © 2024 Secure Bank. All rights reserved.
           </div>
-          <div className="flex space-x-2">
-            <Image src={visa} height={30} width={30} alt="Visa" className="h-5" />
-            <Image src={amexcard} height={30} width={30} alt="Amex" className="h-5" />
-            <Image src={mastercard} height={30} width={30} alt="Master" className="h-5" />
+          <div className="flex space-x-4">
+            <Image src={visa} alt="Visa" className="h-[25px] w-[25px]" />
+            <Image src={amexcard} alt="Amex" className="h-[25px] w-[25px]" />
+            <Image src={mastercard} alt="Master" className="h-[25px] w-[25px]" />
           </div>
         </CardFooter>
       </Card>
