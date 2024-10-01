@@ -4,10 +4,11 @@ import { Request, Response } from "express";
 import axios from "axios";
 
 const router = express.Router();
-const secret = "mysupersecret";
+const secret = process.env.JWT_SECRET  || "mysupersecret";
 
-const createToken = (userId: string, amount: string) => {
+const createToken = (userId: string, amount: string, number:string) => {
   const playload = {
+    number: number,
     userId: userId,
     amount: amount,
   };
@@ -16,29 +17,55 @@ const createToken = (userId: string, amount: string) => {
   return token;
 };
 
+const verifyToken = (token: string)=>{
+  const result = Jwt.verify(token,secret) as JwtPayload;
+  return result;
+}
+
 router.post("/create", (req: Request, res: Response) => {
   try {
     const data = req.body;
-    const Token = createToken(data.user_identifier, data.amount);
+    const Token = createToken(data.user_identifier, data.amount,data.number);
     res.json({ token: Token, msg: "token created!!" });
   } catch (error) {
     res.status(500).json({ error: "Something went wrong!" });
   }
 });
 
-router.get("/check", async (req: Request, res: Response) => {
-  const { token } = req?.query || "";
+router.get("/verify",(req:Request,res:Response)=>{
+  try{
+    if(typeof req.query.token === "string"){
+      const {userId,amount,number} = verifyToken(req.query.token);
+      res.status(200).json({
+        number,
+        userId,
+        amount
+      })
+    }else{
+      res.status(404).json({
+        message: "Invalid Token"
+      })
+    } 
+  }catch(e){
+    res.status(411).json({
+      message: "Error while verifying token",
+      error:e
+    })
+  }
+})
+
+router.get("/finalize", async (req: Request, res: Response) => {
+  console.log("this is the call to finize")
   try {
-    if (typeof token === "string") {
-      console.log(typeof token, "this is the type of token");
+    if (typeof req.query.token === "string") {
+      console.log("this is the call to finize and token is",req.query.token);
 
-      const result = Jwt.verify(token, secret) as JwtPayload;
 
-      const { userId, amount } = result;
+      const { userId, amount } = verifyToken(req.query.token);
 
-      if (result) {
+      if (userId && amount) {
         const body = {
-          token: token,
+          token: req.query.token,
           user_identifier: userId,
           amount: amount,
         };
@@ -55,7 +82,7 @@ router.get("/check", async (req: Request, res: Response) => {
           res.json({ msg: "funds added sucessfully!!" });
         }
       }
-      console.log(result, "this is result");
+      console.log(userId,amount, "this is result and userId");
     }
   } catch (e) {
     res.status(402).json({ msg: e });

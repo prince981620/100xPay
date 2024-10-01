@@ -9,10 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@repo/ui": "*",
     "@repo/db": "*",
     "@repo/schemas": "*",
+    "@repo/ui": "*",
+    "@types/axios": "^0.14.0",
     "@types/bcrypt": "^5.0.2",
+    "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
     "next": "14.2.6",
     "next-auth": "^4.24.7",

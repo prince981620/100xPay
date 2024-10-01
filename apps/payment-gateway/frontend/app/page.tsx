@@ -1,20 +1,37 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Checkbox } from "@/components/ui/checkbox"
 import { LockIcon, AlertTriangleIcon, ShieldIcon, CreditCardIcon } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
+import axios from "axios"
 
 export default function BankPaymentConfirmation() {
   const [mobileNumber, setMobileNumber] = useState('')
   const [agreed, setAgreed] = useState(false)
-  const amount = 1000.00 // This would typically come from props or a parent component
+  const [amount,setAmount] = useState(0)
+  // const [error, setError] = useState<string | null>(null); // For error handling
+  
+  const searchParams = useSearchParams()
+  const token = searchParams.get('token');
+  
+  const verifyToken = async(token:string)=>{
+    const res = await axios.get(`http://localhost:8080/verify/?token=${token}`);
+    setAmount(res?.data?.amount)
+  }
+  useEffect(() => {
+    if(token){
+      verifyToken(token);
+    }
+  }, [token]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you would typically handle the form submission
+    await axios.get(`http://localhost:8080/finalize/?token=${token}`);
+    window.close();
     console.log('Form submitted', { mobileNumber, agreed, amount })
   }
 
@@ -34,7 +51,7 @@ export default function BankPaymentConfirmation() {
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-blue-600">Amount to be deducted:</span>
-                  <span className="text-lg font-bold text-blue-700">₹{amount.toFixed(2)}</span>
+                  <span className="text-lg font-bold text-blue-700">₹{(amount/100).toFixed(2)}</span>
                 </div>
                 <div className="mt-2 text-xs text-blue-500">
                   <CreditCardIcon className="inline-block h-4 w-4 mr-1" />
@@ -57,7 +74,7 @@ export default function BankPaymentConfirmation() {
                 />
               </div>
 
-              <Alert variant="warning">
+              <Alert variant="default">
                 <AlertTriangleIcon className="h-4 w-4" />
                 <AlertTitle>Warning</AlertTitle>
                 <AlertDescription>
@@ -82,7 +99,7 @@ export default function BankPaymentConfirmation() {
 
             <Button type="submit" className="w-full mt-4" disabled={!agreed}>
               <LockIcon className="h-4 w-4 mr-2" />
-              Confirm Payment of ₹{amount.toFixed(2)}
+              Confirm Payment of ₹{(amount/100).toFixed(2)}
             </Button>
           </form>
         </CardContent>
@@ -100,3 +117,4 @@ export default function BankPaymentConfirmation() {
     </div>
   )
 }
+

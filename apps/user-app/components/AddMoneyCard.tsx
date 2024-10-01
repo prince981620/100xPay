@@ -5,16 +5,15 @@ import { Card } from "@repo/ui/card";
 import { Select } from "@repo/ui/select";
 import { TextInput } from "@repo/ui/text-input";
 import { useState } from "react";
-import db from "@repo/db/client";
 import { createOnrampTransaction } from "../app/lib/actions/createOnrampTransaction";
 
 
 const SUPPORTED_BANKS = [{
     name: "HDFC Bank",
-    redirectUrl: "http://localhost:3001"
+    redirectUrl: "http://localhost:3004/?token="
 }, {
     name: "Axis Bank",
-    redirectUrl: "https://www.axisbank.com/"
+    redirectUrl: "http://localhost:3004/?token="
 }];
 
 export const AddMoney = () => {
@@ -38,7 +37,9 @@ export const AddMoney = () => {
         }))} />
         <div className="flex justify-center pt-4">
         <Button  onClick={async () => {
-    await createOnrampTransaction(provider, amount * 100);
+    const token = await createOnrampTransaction(provider, amount * 100);
+    console.log("this is the response token",token);
+    // const token = response.token
 
     // Get the screen width and height
     const screenWidth = window.screen.width;
@@ -53,7 +54,7 @@ export const AddMoney = () => {
     const top = (screenHeight - height) / 2;
 
     // Open a new centered window with the specified dimensions
-    window.open(redirectUrl, 'miniTab', `width=${width},height=${height},left=${left},top=${top}`);
+    window.open(redirectUrl+token, 'miniTab', `width=${width},height=${height},left=${left},top=${top}`);
 }}> Add money
 </Button>
         </div>
