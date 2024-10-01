@@ -7,12 +7,19 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Checkbox } from "@/components/ui/checkbox"
 import { LockIcon, AlertTriangleIcon, ShieldIcon, CreditCardIcon } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
+import visa from "../lib/visa-logo.png";
+import amexcard from "@/lib/card.png";
+import mastercard from "@/lib/logo.png";
 import axios from "axios"
+import Image from 'next/image'
 
 export default function BankPaymentConfirmation() {
-  const [mobileNumber, setMobileNumber] = useState('')
-  const [agreed, setAgreed] = useState(false)
-  const [amount,setAmount] = useState(0)
+  const [mobileNumber, setMobileNumber] = useState('');
+  const [agreed, setAgreed] = useState(false);
+  const [amount,setAmount] = useState(0);
+  const [error,setError] = useState('');
+  const [loading,setLoading]  = useState(false);
+
   // const [error, setError] = useState<string | null>(null); // For error handling
   
   const searchParams = useSearchParams()
@@ -28,11 +35,24 @@ export default function BankPaymentConfirmation() {
     }
   }, [token]);
 
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    await axios.get(`http://localhost:8080/finalize/?token=${token}`);
-    window.close();
-    console.log('Form submitted', { mobileNumber, agreed, amount })
+    
+    try{
+      setLoading(true);
+      await axios.get(`http://localhost:8080/finalize/?token=${token}`);
+      setLoading(false);
+
+
+      setTimeout(() => {
+        window.close();        
+      },5000)
+      console.log('Form submitted', { mobileNumber, agreed, amount })
+    }
+    catch(e){
+
+    }
   }
 
   return (
@@ -108,9 +128,9 @@ export default function BankPaymentConfirmation() {
             © 2024 Secure Bank. All rights reserved.
           </div>
           <div className="flex space-x-2">
-            <img src="/placeholder.svg?height=20&width=32" alt="Visa" className="h-5" />
-            <img src="/placeholder.svg?height=20&width=32" alt="Mastercard" className="h-5" />
-            <img src="/placeholder.svg?height=20&width=32" alt="Amex" className="h-5" />
+            <Image src={visa} height={30} width={30} alt="Visa" className="h-5" />
+            <Image src={amexcard} height={30} width={30} alt="Amex" className="h-5" />
+            <Image src={mastercard} height={30} width={30} alt="Master" className="h-5" />
           </div>
         </CardFooter>
       </Card>
