@@ -22,11 +22,11 @@ export const AddMoney = () => {
     const [amount,setAmount] = useState(0);
     return <Card title="Add Money">
     <div className="w-full">
-        <TextInput label={"Amount"} placeholder={"Amount"} onChange={(value) => {
+        <TextInput inputAmt={amount} label={"Amount"} placeholder={"Amount"} onChange={(value) => {
             if(/^\d*\.?\d*$/.test(value) && value.length < 6){
             setAmount(Number(value));
             }
-        }} amount={amount}/>
+        }} />
         <div className="py-4 text-left">
             Bank
         </div>
