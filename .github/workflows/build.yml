@@ -1,31 +1,62 @@
-name: Build on PR
+# name: Build on PR
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - master
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - master
+#       - main
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
 
-      - name: Set up Node.js and Yarn
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-          cache: 'yarn'  # Enable caching for Yarn dependencies
+#     services:
+#       db:
+#         image: postgres:latest  # Postgres database service
+#         ports:
+#           - 5432:5432  # Map port 5432 for Postgres
+#         env:
+#           POSTGRES_USER: postgres
+#           POSTGRES_PASSWORD: mysecretpassword  # Use your password
+#           POSTGRES_DB: mydb  # Use the same database as in your Prisma schema
+#         options: >-
+#           --health-cmd "pg_isready -U postgres"
+#           --health-interval 10s
+#           --health-timeout 5s
+#           --health-retries 5
 
-      - name: Install Dependencies
-        run: yarn install
+#     steps:
+#       - uses: actions/checkout@v3
 
-      - name: Generate prisa client
-        run: yarn db:generate
-        
-      - name: Run Build
-        run: yarn build
+#       - name: Set up Node.js and Yarn
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: '20'
+#           cache: 'yarn'
+
+#       - name: Install Dependencies
+#         run: yarn install
+
+#       # Wait until Postgres is ready
+#       - name: Wait for Postgres to be ready
+#         run: |
+#           until pg_isready -h localhost -p 5432; do
+#             echo "Waiting for Postgres to be ready..."
+#             sleep 2
+#           done
+
+#       # Run Prisma migrations to ensure the database schema is up-to-date
+#       - name: Run Prisma Migrate
+#         env:
+#           DATABASE_URL: "postgresql://postgres:mysecretpassword@localhost:5432/mydb?schema=public"
+#         run: yarn db:migrate  # Or use `migrate deploy` in CI for production-like environments
+
+#       # Generate Prisma client
+#       - name: Generate Prisma Client
+#         run: yarn db:generate  # Make sure this runs `npx prisma generate`
+
+#       - name: Run Build
+#         run: yarn build

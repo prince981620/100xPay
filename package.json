@@ -6,7 +6,11 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "db:generate": "cd packages/db && npx prisma generate && cd ../.."
+    "db:migrate": "cd packages/db && npx prisma migrate dev --name test && cd ../../",
+    "db:generate": "cd packages/db && npx prisma generate && cd ../../",
+    "db:seed": "cd packages/db && npx prisma db seed && cd ../../",
+    "db:studio": "cd packages/db && npx prisma studio && cd ../../",
+    "db:prepare": "yarn db:migrate && yarn db:generate && yarn db:seed"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
