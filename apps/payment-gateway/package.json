@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "install": "concurrently \"cd backend && yarn install\" \"cd frontend && yarn install\"",
     "build": "concurrently \"cd backend && esbuild ./src/index.ts --bundle --platform=node --outfile=dist/index.js\" \"cd frontend && yarn build\"",
     "start": "node dist/index.js",
     "dev": "concurrently \"cd backend && yarn dev\" \"cd frontend && yarn dev\""

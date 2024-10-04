@@ -23,6 +23,9 @@ jobs:
 
       - name: Install Dependencies
         run: yarn install
+
+      - name: Generate prisa client
+        run: yarn db:generate
         
       - name: Run Build
         run: yarn build
