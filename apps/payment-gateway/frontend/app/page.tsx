@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Checkbox } from "@/components/ui/checkbox"
 import { LockIcon, AlertTriangleIcon, ShieldIcon, CreditCardIcon } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
 import visa from "../lib/visa-logo.png";
 import amexcard from "@/lib/card.png";
 import mastercard from "@/lib/logo.png";
@@ -42,15 +41,17 @@ const startTimer = () =>{
   const searchParams = useSearchParams()
   const token = searchParams.get('token');
 
+
   const verifyToken = async (token: string) => {
     const res = await axios.get(`http://localhost:8080/verify/?token=${token}`);
-    setAmount(res?.data?.amount)
-  }
+    setAmount(res?.data?.amount);
+  };
+
   useEffect(() => {
     if (token) {
       verifyToken(token);
     }
-  }, [token]);
+  }, []);
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -78,7 +79,7 @@ const startTimer = () =>{
       setLoading(false);
       setError(true);
     }
-  }
+  };
 
   return (
     <>
@@ -90,6 +91,7 @@ const startTimer = () =>{
               <div className="flex items-center justify-between">
                 <CardTitle className="text-2xl font-bold">Secure Payment Confirmation</CardTitle>
                 <ShieldIcon className="h-6 w-6 text-green-600" />
+
               </div>
               <CardDescription>Please confirm your payment details</CardDescription>
             </CardHeader>
@@ -222,5 +224,5 @@ const startTimer = () =>{
     </>
 
   )
-}
 
+}
