@@ -24,7 +24,7 @@ export const AddMoney = () => {
     <div className="w-full">
         <TextInput inputAmt={amount} label={"Amount"} placeholder={"Amount"} onChange={(value) => {
             if(/^\d*\.?\d*$/.test(value) && value.length < 6){
-            setAmount(Number(value));
+              setAmount(Number(value));
             }
         }} />
         <div className="py-4 text-left">
